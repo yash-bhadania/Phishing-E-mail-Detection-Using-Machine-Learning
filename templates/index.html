@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Website Detection</title>
+    <link rel="stylesheet" href="../statics/temp.css">
+    <!-- <link rel="stylesheet" type="text/css" href="temp.css"> -->
+</head>
+<body>
+    <div class="cnt">
+
+   
+    <div id="main_" class="main_">
+    <h1>Phishing Website Detection</h1>
+    <form id="predictionForm">
+        <label for="url">URL:</label>
+        <div class="url_container">
+            <input class="url_" type="text" id="url" required>
+        </div>
+        <div class="btn_">
+            <button type="submit">Predict</button>
+        </div>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var url = document.getElementById('url').value;
+            var resultDiv = document.getElementById('result');
+
+            // Make a fetch request to your Flask API
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                
+                if (data.result) {
+                    if(data.result=="ham"){
+                        resultDiv.innerHTML = `Prediction:   <span style="color:green;">${data.result}</span>`;
+                    }
+                    else{
+                        resultDiv.innerHTML = `Prediction:   <span style="color:red;">${data.result}</span>`;
+                    }
+                } else {
+                    resultDiv.innerHTML = 'Error: ' + data.error;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = 'Error occurred, please try again.';
+            });
+        });
+    </script>
+    </div>
+</div>
+</body>
+</html>
